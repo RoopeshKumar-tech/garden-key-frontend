@@ -26,9 +26,9 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-content-left">
           <div className="footer-logo" onClick={scrollToTop}>
-            <img 
-              src={assets.logo} 
-              alt="Garden Key Logo" 
+            <img
+              src={assets.logo}
+              alt="Garden Key Logo"
               className="footer-logo-img"
             />
             <div className="footer-logo-text" onClick={scrollToTop}>
@@ -49,7 +49,7 @@ const Footer = () => {
               <a href="https://www.instagram.com/Karna.3137/" target="_blank" rel="noopener noreferrer">
                 <img src={assets.instagram_icon} alt="Instagram" />
               </a>
-              <a href="https://x.com/Durgesh_offl?t=YEq6Xv3wYQwIuQ4zoQnfcg&s=09" target="_blank" rel="noopener noreferrer">
+              <a href="https://x.com/Roopesh89264114" target="_blank" rel="noopener noreferrer">
                 <img src={assets.twitter_icon} alt="Twitter" />
               </a>
               <a href="https://www.linkedin.com/in/Roopesh-Kumar-K/" target="_blank" rel="noopener noreferrer">
@@ -69,9 +69,9 @@ const Footer = () => {
 
           <div className="footer-subscribe">
             <form onSubmit={handleSubscribe}>
-              <input 
-                type="email" 
-                placeholder="Your email" 
+              <input
+                type="email"
+                placeholder="Your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
