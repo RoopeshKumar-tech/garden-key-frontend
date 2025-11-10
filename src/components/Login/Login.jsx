@@ -10,6 +10,8 @@ const Login = ({ setShowLogin }) => {
   const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Forgot password states
   const [forgotMode, setForgotMode] = useState(false);
   const [fpStep, setFpStep] = useState(1);
   const [fpPhoneMatched, setFpPhoneMatched] = useState(false);
@@ -35,10 +37,12 @@ const Login = ({ setShowLogin }) => {
   const passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
+  // -------------------- INPUT HANDLER --------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
+    // Validation
     if (name === 'name') {
       setErrors((prev) => ({
         ...prev,
@@ -73,6 +77,7 @@ const Login = ({ setShowLogin }) => {
     }
   };
 
+  // -------------------- LOGIN / SIGNUP SUBMIT --------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (forgotMode) return;
@@ -135,16 +140,12 @@ const Login = ({ setShowLogin }) => {
     }
   };
 
+  // -------------------- FORGOT PASSWORD HANDLERS --------------------
   const handleStartForgot = () => {
     setForgotMode(true);
     setFpStep(1);
     setFpPhoneMatched(false);
-    setFormData((prev) => ({
-      ...prev,
-      phone: '',
-      password: '',
-      confirmPassword: '',
-    }));
+    setFormData((prev) => ({ ...prev, phone: '', password: '', confirmPassword: '' }));
     setErrors((prev) => ({ ...prev, phone: '', password: '' }));
   };
 
@@ -159,20 +160,18 @@ const Login = ({ setShowLogin }) => {
     e.preventDefault();
     const phone = formData.phone?.trim();
     if (!phoneRegex.test(phone)) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: 'Enter a valid 10-digit phone number',
-      }));
+      setErrors((prev) => ({ ...prev, phone: 'Enter a valid 10-digit phone number' }));
       return;
     }
+
     try {
       const resp = await axios.post(`${API_BASE}/verify-phone`, { phone });
-      if (resp.data?.matched) {
+
+      if (resp.data?.success) {
         setFpPhoneMatched(true);
         setFpStep(2);
-        toast.success('Phone number matched. Please set a new password.');
+        toast.success('Phone number verified. Enter new password.');
       } else {
-        setFpPhoneMatched(false);
         toast.error(resp.data?.message || 'Phone number not found.');
       }
     } catch (error) {
@@ -187,8 +186,7 @@ const Login = ({ setShowLogin }) => {
     if (!passwordRegex.test(password)) {
       setErrors((prev) => ({
         ...prev,
-        password:
-          'Password must be 8+ chars and include letters, numbers & special symbols',
+        password: 'Password must be 8+ chars and include letters, numbers & special symbols',
       }));
       return;
     }
@@ -209,11 +207,7 @@ const Login = ({ setShowLogin }) => {
         setForgotMode(false);
         setFpStep(1);
         setFpPhoneMatched(false);
-        setFormData((prev) => ({
-          ...prev,
-          password: '',
-          confirmPassword: '',
-        }));
+        setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }));
         setErrors((prev) => ({ ...prev, password: '' }));
         setIsLogin(true);
       } else {
@@ -224,6 +218,7 @@ const Login = ({ setShowLogin }) => {
     }
   };
 
+  // -------------------- RENDER --------------------
   return (
     <div className="login">
       <div className="login-container">
@@ -246,33 +241,26 @@ const Login = ({ setShowLogin }) => {
           <form onSubmit={fpStep === 1 ? handleVerifyPhone : handleResetPassword}>
             <div className="login-inputs">
               {fpStep === 1 && (
-                <>
-                  <div className="input-group">
-                    <label>Registered Phone Number</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      placeholder="10-digit phone number"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errors.phone && (
-                      <small className="error-text">{errors.phone}</small>
-                    )}
-                  </div>
-                  <button type="submit" className="submit-button">
+                <div className="input-group">
+                  <label>Registered Phone Number</label>
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="10-digit phone number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.phone && <small className="error-text">{errors.phone}</small>}
+                  <button type="submit" className="submit-button" style={{ marginTop: '10px' }}>
                     Verify Phone
                   </button>
                   <div className="toggle-state" style={{ marginTop: '0.6rem' }}>
-                    <span
-                      onClick={handleCancelForgot}
-                      style={{ color: '#007bff', cursor: 'pointer' }}
-                    >
+                    <span onClick={handleCancelForgot} style={{ color: '#007bff', cursor: 'pointer' }}>
                       Cancel
                     </span>
                   </div>
-                </>
+                </div>
               )}
 
               {fpStep === 2 && (
@@ -296,9 +284,7 @@ const Login = ({ setShowLogin }) => {
                         {showPassword ? '👁️' : '👁️‍🗨️'}
                       </button>
                     </div>
-                    {errors.password && (
-                      <small className="error-text">{errors.password}</small>
-                    )}
+                    {errors.password && <small className="error-text">{errors.password}</small>}
                   </div>
 
                   <div className="input-group">
@@ -313,19 +299,12 @@ const Login = ({ setShowLogin }) => {
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="submit-button"
-                    style={{ marginTop: '10px' }}
-                  >
+                  <button type="submit" className="submit-button" style={{ marginTop: '10px' }}>
                     Update Password
                   </button>
 
                   <div className="toggle-state" style={{ marginTop: '0.6rem' }}>
-                    <span
-                      onClick={handleCancelForgot}
-                      style={{ color: '#007bff', cursor: 'pointer' }}
-                    >
+                    <span onClick={handleCancelForgot} style={{ color: '#007bff', cursor: 'pointer' }}>
                       Cancel
                     </span>
                   </div>
@@ -349,9 +328,7 @@ const Login = ({ setShowLogin }) => {
                       onChange={handleChange}
                       required
                     />
-                    {errors.name && (
-                      <small className="error-text">{errors.name}</small>
-                    )}
+                    {errors.name && <small className="error-text">{errors.name}</small>}
                   </div>
 
                   <div className="input-group">
@@ -364,9 +341,7 @@ const Login = ({ setShowLogin }) => {
                       onChange={handleChange}
                       required
                     />
-                    {errors.phone && (
-                      <small className="error-text">{errors.phone}</small>
-                    )}
+                    {errors.phone && <small className="error-text">{errors.phone}</small>}
                   </div>
                 </>
               )}
@@ -381,9 +356,7 @@ const Login = ({ setShowLogin }) => {
                   onChange={handleChange}
                   required
                 />
-                {errors.email && (
-                  <small className="error-text">{errors.email}</small>
-                )}
+                {errors.email && <small className="error-text">{errors.email}</small>}
               </div>
 
               <div className="input-group">
@@ -405,9 +378,7 @@ const Login = ({ setShowLogin }) => {
                     {showPassword ? '👁️' : '👁️‍🗨️'}
                   </button>
                 </div>
-                {!isLogin && errors.password && (
-                  <small className="error-text">{errors.password}</small>
-                )}
+                {!isLogin && errors.password && <small className="error-text">{errors.password}</small>}
               </div>
 
               {!isLogin && (
@@ -432,9 +403,7 @@ const Login = ({ setShowLogin }) => {
         )}
 
         {!forgotMode && (
-          <div
-            style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}
-          >
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
             <div className="toggle-state">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
               <span onClick={() => setIsLogin(!isLogin)}>
@@ -447,13 +416,7 @@ const Login = ({ setShowLogin }) => {
                 <button
                   type="button"
                   onClick={handleStartForgot}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#007bff',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
+                  style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', padding: 0 }}
                 >
                   Forgot password?
                 </button>
